@@ -18,12 +18,12 @@
             android:layout_height="100dp"
             android:background="@color/transparent_black_10"
             app:bigScaleWidth="2dp"
+            app:maxValue="120"
+            app:minValue="50"
             app:scaleColor="@color/gary"
             app:scaleSpaceWidth="10dp"
             app:scaleTextColor="@color/transparent_black_95"
-            app:smallScaleWidth="1dp"
-            app:minValue="50"
-            app:maxValue="120"/>
+            app:smallScaleWidth="1dp"/>
 
         <View
             android:layout_width="4px"
@@ -51,6 +51,132 @@
         android:layout_marginTop="10dp"
         android:text="11111"
         android:textColor="@color/colorAccent"/>
+
+    <TextView
+        android:id="@+id/select_date_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="date"
+        android:textColor="@color/colorAccent"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <mirahome.customapplication.YearPickView
+                android:id="@+id/year_pick_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <View
+                android:layout_width="300px"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:background="@color/colorAccent"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <mirahome.customapplication.MonthPickView
+                android:id="@+id/month_pick_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <View
+                android:layout_width="300px"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:background="@color/colorAccent"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <mirahome.customapplication.DayPickView
+                android:id="@+id/day_pick_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <View
+                android:layout_width="300px"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:background="@color/colorAccent"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <mirahome.customapplication.DatePickView
+        android:id="@+id/date_select_view"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        app:defaultDay="6"
+        app:defaultMonth="6"
+        app:defaultYear="1980"
+        app:textColor="@color/colorPrimary"
+        app:textMargin="10dp"
+        app:textSize="29sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/year_edit_view"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/month_edit_view"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/day_edit_view"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/set_year_btn"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="SET"/>
+
+        <Button
+            android:id="@+id/set_month_btn"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="SET"/>
+
+        <Button
+            android:id="@+id/set_day_btn"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="SET"/>
+
+    </LinearLayout>
 
 
 </LinearLayout>

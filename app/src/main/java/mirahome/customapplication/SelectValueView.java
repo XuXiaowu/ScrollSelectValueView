@@ -41,11 +41,6 @@ public class SelectValueView extends View {
     private static final int SCALE_TEXT_MARGIN_TOP = 20; //刻度文字距刻度线的间距
     private static final int SCALE_TEXT_SIZE = 30; //刻度字体大小
 
-    private OverScroller mScroller;
-
-    private float mStartX = 0;//按下时y值
-    private float mCurrentValue;
-    private float mSelectValue;
     private int mMoveX;
     private int mLastX;
     private int mWidth;
@@ -53,6 +48,17 @@ public class SelectValueView extends View {
     private int mFlingMinX;
     private int mFlingMaxX;
     private int mContentWidth;
+    private int mScaleColor; //刻度线颜色
+    private int mScaleTextColor; //刻度文字颜色
+    private int mMinValue; //最大值
+    private int mMaxValue; //最小值
+
+    private float mStartX = 0;//按下时y值
+    private float mCurrentValue;
+    private float mSelectValue;
+    private float mSmallScaleWidth; //小刻度线宽度
+    private float mBigScaleWidth; //大刻度线宽度
+    private float mScaleSpaceWidth; //刻度宽度
 
     private Paint mScaleSmallLinePaint; //刻度线画笔
     private Paint mScaleBigLinePaint; //刻度线画笔
@@ -60,16 +66,8 @@ public class SelectValueView extends View {
     private VelocityTracker mVelocityTracker;
     private EdgeEffect mLeftEdgeEffect;
     private EdgeEffect mRightEdgeEffect;
+    private OverScroller mScroller;
 
-    private int mScaleColor; //刻度线颜色
-    private int mScaleTextColor; //刻度文字颜色
-    private int mMinValue; //最大值
-    private int mMaxValue; //最小值
-    private float mSmallScaleWidth; //小刻度线宽度
-    private float mBigScaleWidth; //大刻度线宽度
-    private float mScaleSpaceWidth; //刻度宽度
-
-    private MHandler mHandler;
     private ValueSelectListener mValueSelectListener;
 
     private boolean mAutoSmoothScrollable;
@@ -87,7 +85,6 @@ public class SelectValueView extends View {
 
         getAttribute(context, attrs);
         init();
-        mHandler.sendEmptyMessageDelayed(WHAT_RESET_SCROLL, 200);
     }
 
     @Override
@@ -96,6 +93,7 @@ public class SelectValueView extends View {
         mWidth = MeasureSpec.getSize(widthMeasureSpec);
         mHeight = MeasureSpec.getSize(heightMeasureSpec);
         mFlingMinX = -mWidth / 2;
+        resetScrollPosition();
         setMeasuredDimension(mWidth, mHeight);
     }
 
@@ -236,7 +234,6 @@ public class SelectValueView extends View {
         mLeftEdgeEffect = new EdgeEffect(getContext());
         mRightEdgeEffect = new EdgeEffect(getContext());
 
-        mHandler = new MHandler(this);
     }
 
     //缓慢滚动到指定位置
@@ -277,11 +274,7 @@ public class SelectValueView extends View {
 
         for (int i = mMinValue; i < mMaxValue + 1; i++) {
             String text = String.valueOf(i);
-//            float textHeight;
             float textLength = mScaleSmallLinePaint.measureText(text);
-            Paint.FontMetrics fontMetrics = mScaleSmallLinePaint.getFontMetrics();
-//            textHeight = fontMetrics.bottom - fontMetrics.top;
-
             float x = (i - mMinValue) * mScaleSpaceWidth * 10 - textLength;
             float y = BIG_SCALE_HEIGHT + SCALE_TEXT_SIZE + SCALE_TEXT_MARGIN_TOP;
             canvas.drawText(text, x, y, mScalePaintText);
@@ -322,26 +315,9 @@ public class SelectValueView extends View {
         return width;
     }
 
-    private static class MHandler extends Handler {
-
-        private final WeakReference<SelectValueView> mSelectValueView;
-
-        public MHandler(SelectValueView selectValueView) {
-            mSelectValueView = new WeakReference(selectValueView);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            SelectValueView selectValueView = mSelectValueView.get();
-            if (selectValueView == null) return;
-
-            switch (msg.what) {
-                case WHAT_RESET_SCROLL:
-                    selectValueView.scrollTo(selectValueView.mFlingMinX, 0);
-                    selectValueView.mScroller.startScroll(selectValueView.mFlingMinX, 0, 0, 0, 0);
-                    break;
-            }
-        }
+    private void resetScrollPosition() {
+        scrollTo(mFlingMinX, 0);
+        mScroller.startScroll(mFlingMinX, 0, 0, 0, 0);
     }
 
     public interface ValueSelectListener {

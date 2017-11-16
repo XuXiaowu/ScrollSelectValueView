@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ScrollSelectValueView.iml" filepath="$PROJECT_DIR$/ScrollSelectValueView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CustomViewProject.iml" filepath="$PROJECT_DIR$/CustomViewProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
