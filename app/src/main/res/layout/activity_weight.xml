@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="mirahome.customapplication.WeightActivity">
+
+    <mirahome.customapplication.weightPickView.WeightPickView
+        android:id="@+id/weight_pick_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:weightPickDefaultFirstInchValue="60"
+        app:weightPickDefaultFirstMetricValue="27"
+        app:weightPickDefaultSecondIndex="0"
+        app:weightPickIsMetricUnit="true"
+        app:weightPickTextColor="@color/green2"
+        app:weightPickTextSize="24dp"/>
+
+    <EditText
+        android:id="@+id/first_edit_view"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"/>
+
+    <Switch
+        android:id="@+id/switch_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/set_btn"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="SET"/>
+
+</LinearLayout>

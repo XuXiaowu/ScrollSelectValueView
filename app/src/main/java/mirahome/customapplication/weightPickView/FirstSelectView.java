@@ -1,4 +1,4 @@
-package mirahome.customapplication;
+package mirahome.customapplication.weightPickView;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -14,59 +14,64 @@ import android.widget.OverScroller;
 
 import com.blankj.ALog;
 
-import java.text.SimpleDateFormat;
+import mirahome.customapplication.R;
 
 /**
- * Created by xuxiaowu on 2017/11/13.
+ * Created by xuxiaowu on 2018/3/2.
+ * <p>
+ * 第一个View，选中数值
  */
+public class FirstSelectView extends View {
 
-public class YearPickView extends View {
-
-    private static final int DEFAULT_HEIGHT = 500;
-    private static final int DEFAULT_WIDTH = 300;
-    private static final int MIN_YEAR = 1900;
+    private static final int DEFAULT_HEIGHT = 600; //默认高度
+    private static final int DEFAULT_WIDTH = 300; //默认宽度
     private static final int TEXT_SIZE = 60; //字体大小
-    private static final int TEXT_MARGIN = 40;
+    private static final int TEXT_MARGIN = 40; //字体的上下间距
+    private static final int METRIC_MIN_VALUE = 27; //公制最小值
+    private static final int METRIC_MAX_VALUE = 225; //公制最大值
+    private static final int INCH_MIN_VALUE = 60; //英制最小值
+    private static final int INCH_MAX_VALUE = 499; //英制最大值
+    private static final boolean IS_METRIC_UNIT = true; //是否公制单位
 
     private float mStartY = 0;//按下时y值
 
-    private int mSelectYear; //选中的年份
+    private int mSelectIndex; //选中的index
     private int mMoveY;
     private int mHeight;
     private int mWidth;
     private int mFlingMinY;
     private int mFlingMaxY;
-    private int mCurrentYear;
     private int mLastY;
     private int mItemHeight; //item高度
     private int mTextHeight; //文字的高度
-    private int mTextSize;
-    private int mTextColor;
-    private int mTextMargin;
+    private int mTextMargin; //文字的上下间距
+    private int mSelectMetricValueIndex; //公制值的index
+    private int mSelectInchValueIndex; //英制值的index
+    private String[] mMetricValues; //公制数据
+    private String[] mInchValues; //英制数据
+    private String[] mValues; //当前选择的数据
 
     private boolean mAutoSmoothScrollable;
+    private boolean mIsMetricUnit = true; //是否公制单位
 
     private Paint mTextPaint;
     private VelocityTracker mVelocityTracker;
-    private EdgeEffect mTopEdgeEffect;
-    private EdgeEffect mBottomEdgeEffect;
+    private EdgeEffect mTopEdgeEffect; //上面发光效果
+    private EdgeEffect mBottomEdgeEffect; //下面发光效果
     private OverScroller mScroller;
-    private YearSelectListener mYearSelectListener;
+    private ValueSelectListener mValueSelectListener;
 
-    public YearPickView(Context context) {
+    public FirstSelectView(Context context) {
         this(context, null);
     }
 
-    public YearPickView(Context context, @Nullable AttributeSet attrs) {
+    public FirstSelectView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public YearPickView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public FirstSelectView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setBackgroundResource(R.color.white);
-
         init();
-        resetScrollPosition();
     }
 
     @Override
@@ -78,8 +83,7 @@ public class YearPickView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        drawYearText(canvas);
-        drawCentreLine(canvas);
+        drawValueText(canvas);
         drawEdgeEffect(canvas);
     }
 
@@ -151,10 +155,15 @@ public class YearPickView extends View {
             }
 
         } else {
-            int year = valueI + MIN_YEAR;
-            if (year != mSelectYear && mYearSelectListener != null && mAutoSmoothScrollable) {
-                mSelectYear = year;
-                mYearSelectListener.onYearSelectedListener(mSelectYear);
+            int index = valueI;
+            if (index != mSelectIndex && mValueSelectListener != null && mAutoSmoothScrollable) {
+                mSelectIndex = index;
+                if (mIsMetricUnit) {
+                    mSelectMetricValueIndex = mSelectIndex;
+                } else {
+                    mSelectInchValueIndex = mSelectIndex;
+                }
+                mValueSelectListener.onFirstValueSelectedListener(mSelectIndex, mValues[mSelectIndex], mIsMetricUnit);
             }
 
             if (mAutoSmoothScrollable) {
@@ -165,35 +174,57 @@ public class YearPickView extends View {
     }
 
     private void init() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-        String date = sdf.format(new java.util.Date());
-        mCurrentYear = Integer.parseInt(date);
-
         mWidth = DEFAULT_WIDTH;
         mHeight = DEFAULT_HEIGHT;
-        mTextSize = TEXT_SIZE;
-        mTextMargin = TEXT_MARGIN;
+        mIsMetricUnit = IS_METRIC_UNIT;
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextSize(mTextSize);
+        mTextPaint.setTextSize(TEXT_SIZE);
         mTextPaint.setColor(getResources().getColor(R.color.colorPrimary));
 
         mScroller = new OverScroller(getContext());
+        initMetricValues();
+        initInchValues();
+        mValues = mIsMetricUnit ? mMetricValues : mInchValues;
 
         Rect rect = new Rect();
-        String text = String.valueOf(MIN_YEAR);
+        String text = String.valueOf(mValues[mSelectIndex]);
         mTextPaint.getTextBounds(text, 0, text.length(), rect);
         mTextHeight = rect.height();
-        mItemHeight = mTextMargin * 2 + mTextHeight;
+        mItemHeight = TEXT_MARGIN + mTextHeight + TEXT_MARGIN;
 
         mFlingMinY = -mHeight / 2;
-        mFlingMaxY = (mCurrentYear - MIN_YEAR + 1) * mItemHeight - mHeight / 2 - mItemHeight;
+        mFlingMaxY = mValues.length * mItemHeight - mHeight / 2 - mItemHeight;
 
         mTopEdgeEffect = new EdgeEffect(getContext());
         mBottomEdgeEffect = new EdgeEffect(getContext());
     }
 
-    //缓慢滚动到指定位置
+    /**
+     * 初始化公制数据
+     */
+    private void initMetricValues() {
+        int count = METRIC_MAX_VALUE - METRIC_MIN_VALUE + 1;
+        mMetricValues = new String[count];
+        for (int i = 0; i < count; i++) {
+            mMetricValues[i] = String.valueOf(METRIC_MIN_VALUE + i);
+        }
+    }
+
+    /**
+     * 初始化英制数据
+     */
+    private void initInchValues() {
+        int count = INCH_MAX_VALUE - INCH_MIN_VALUE + 1;
+        mInchValues = new String[count];
+        for (int i = 0; i < count; i++) {
+            mInchValues[i] = String.valueOf(INCH_MIN_VALUE + i);
+        }
+    }
+
+    /**
+     * 缓慢滚动到指定位置
+     */
     private void smoothScrollTo(int destX, int destY) {
         int scrollY = getScrollY();
         int delta = destY - scrollY;
@@ -210,26 +241,23 @@ public class YearPickView extends View {
     }
 
     /**
-     * 绘制年份文字
+     * 绘制文字
      */
-    private void drawYearText(Canvas canvas) {
-        int count = mCurrentYear - MIN_YEAR;
-        for (int i = 0; i < count + 1; i++) {
-            String year = String.valueOf(MIN_YEAR + i);
-            float textLength = mTextPaint.measureText(year);
+    private void drawValueText(Canvas canvas) {
+        for (int i = 0; i < mValues.length; i++) {
+            String value = mValues[i];
+            float textLength = mTextPaint.measureText(value);
             float x = (mWidth - textLength) / 2;
             float y = mItemHeight * i + mTextHeight / 2;
-            canvas.drawText(year, x, y, mTextPaint);
+            canvas.drawText(value, x, y, mTextPaint);
         }
     }
 
-    private void drawCentreLine(Canvas canvas) {
-        mTextPaint.setStrokeWidth(1);
-        canvas.drawLine(0, mHeight / 2, mWidth, mHeight / 2, mTextPaint);
-    }
-
+    /**
+     * 绘制上下发光效果
+     */
     private void drawEdgeEffect(Canvas canvas) {
-        //绘制左边发光效果
+        //绘制上边发光效果
         if (!mTopEdgeEffect.isFinished()) {
             final int restoreCount = canvas.save();
             canvas.translate(0, -mHeight / 2);
@@ -239,7 +267,7 @@ public class YearPickView extends View {
             }
             canvas.restoreToCount(restoreCount); //还原canvas
         }
-        //绘制右边发光效果
+        //绘制小边发光效果
         if (!mBottomEdgeEffect.isFinished()) {
             final int restoreCount = canvas.save();
             canvas.translate(0, mFlingMaxY);
@@ -254,18 +282,32 @@ public class YearPickView extends View {
         }
     }
 
+    /**
+     * 设置View大小
+     *
+     * @param height 高
+     * @param width  宽
+     */
     public void setSize(int width, int height) {
         mWidth = width;
         mHeight = height;
 
         Rect rect = new Rect();
-        String text = String.valueOf(MIN_YEAR);
+        String text = String.valueOf(mValues[mSelectIndex]);
         mTextPaint.getTextBounds(text, 0, text.length(), rect);
         mTextHeight = rect.height();
 
         mItemHeight = mTextMargin * 2 + mTextHeight;
         mFlingMinY = -mHeight / 2;
-        mFlingMaxY = (mCurrentYear - MIN_YEAR + 1) * mItemHeight - mHeight / 2 - mItemHeight;
+        mFlingMaxY = mValues.length * mItemHeight - mHeight / 2 - mItemHeight;
+        selectValueForIndex();
+    }
+
+    /**
+     * 设置Item的高度
+     */
+    public int getItemHeight() {
+        return mItemHeight;
     }
 
     /**
@@ -277,37 +319,101 @@ public class YearPickView extends View {
     }
 
     public void setAttribute(int textSize, int textColor, int textMargin) {
-        mTextSize = textSize;
-        mTextColor = textColor;
         mTextMargin = textMargin;
-        mTextPaint.setTextSize(mTextSize);
-        mTextPaint.setColor(mTextColor);
-        ALog.e("setAttribute");
+        mTextPaint.setTextSize(textSize);
+        mTextPaint.setColor(textColor);
     }
 
     /**
-     * 选中某一年
+     * 切换数据
      */
-    public void setYear(int year) {
-        if (year < MIN_YEAR || year > mCurrentYear) {
-            throw new RuntimeException("year overrun");
-        }
-        mSelectYear = year;
-        int moveY = (year - MIN_YEAR) * mItemHeight + mFlingMinY;
+    public void switchData(boolean isMetricUnit) {
+        if (isMetricUnit != mIsMetricUnit) mIsMetricUnit = isMetricUnit;
+        selectValueForIndex();
+        invalidate();
+    }
+
+    /**
+     * 选中指定的值
+     *
+     * @param metricValue  公制值的index
+     * @param inchValue    英制值的index
+     * @param isMetricUnit 是否公制单位
+     */
+    public void selectValueForIndex(int metricValue, int inchValue, boolean isMetricUnit) {
+        int metricValueIndex = metricValue - METRIC_MIN_VALUE;
+        int inchValueIndex = inchValue - INCH_MIN_VALUE;
+        if (mIsMetricUnit == isMetricUnit && mSelectMetricValueIndex == metricValueIndex && mSelectInchValueIndex == inchValueIndex)
+            return;
+        mIsMetricUnit = isMetricUnit;
+        mSelectMetricValueIndex = metricValueIndex;
+        mSelectInchValueIndex = inchValueIndex;
+        selectValueForIndex();
+        invalidate();
+    }
+
+    /**
+     * 根据index选中指定的值
+     */
+    private void selectValueForIndex() {
+        mSelectIndex = mIsMetricUnit ? mSelectMetricValueIndex : mSelectInchValueIndex;
+        mValues = mIsMetricUnit ? mMetricValues : mInchValues;
+        mFlingMaxY = mValues.length * mItemHeight - mHeight / 2 - mItemHeight;
+        int moveY = mSelectIndex * mItemHeight + mFlingMinY;
         scrollTo(0, moveY);
         mScroller.startScroll(0, moveY, 0, 0, 0);
     }
 
-    public void setYearSelectListener(YearSelectListener yearSelectListener) {
-        mYearSelectListener = yearSelectListener;
+    /**
+     * 设置值选中时的监听
+     */
+    public void setValueSelectListener(ValueSelectListener valueSelectListener) {
+        mValueSelectListener = valueSelectListener;
     }
 
-    public interface YearSelectListener {
+    /**
+     * 设置默认选中的值
+     *
+     * @param metricValue 公制单位的值
+     * @param inchValue   英制单位的值
+     */
+    public void setDefaultValue(int metricValue, int inchValue) {
+        mSelectMetricValueIndex = metricValue - METRIC_MIN_VALUE;
+        mSelectInchValueIndex = inchValue - INCH_MIN_VALUE;
+        selectValueForIndex();
+    }
+
+    /**
+     * 选中指定值
+     *
+     * @param value        值
+     * @param isMetricUnit 是否公制单位
+     */
+    public void setSelectValue(int value, boolean isMetricUnit) {
+        if (isMetricUnit) {
+            if (!(value >= METRIC_MIN_VALUE && value <= METRIC_MAX_VALUE))
+                throw new RuntimeException("value overrun");
+        } else {
+            if (!(value >= INCH_MIN_VALUE && value <= INCH_MAX_VALUE))
+                throw new RuntimeException("value overrun");
+        }
+
+        if (isMetricUnit) {
+            mSelectMetricValueIndex = value - METRIC_MIN_VALUE;
+        } else {
+            mSelectInchValueIndex = value - INCH_MIN_VALUE;
+        }
+        mIsMetricUnit = isMetricUnit;
+        selectValueForIndex();
+        invalidate();
+    }
+
+    public interface ValueSelectListener {
 
         /**
          * 值选中时的回调
          */
-        void onYearSelectedListener(int year);
+        void onFirstValueSelectedListener(int index, String value, boolean isMetricUnit);
     }
 
 }

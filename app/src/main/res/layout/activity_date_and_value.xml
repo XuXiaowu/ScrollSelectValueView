@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="mirahome.customapplication.MainActivity">
+    tools:context="mirahome.customapplication.DateAndValueActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <mirahome.customapplication.SelectValueView
+        <mirahome.customapplication.valuePickerView.SelectValueView
             android:id="@+id/select_value_view"
             android:layout_width="match_parent"
             android:layout_height="100dp"
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <mirahome.customapplication.YearPickView
+            <mirahome.customapplication.datePickerView.YearPickView
                 android:id="@+id/year_pick_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -88,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <mirahome.customapplication.MonthPickView
+            <mirahome.customapplication.datePickerView.MonthPickView
                 android:id="@+id/month_pick_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -105,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <mirahome.customapplication.DayPickView
+            <mirahome.customapplication.datePickerView.DayPickView
                 android:id="@+id/day_pick_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -120,9 +120,9 @@
 
     </LinearLayout>
 
-    <mirahome.customapplication.DatePickView
+    <mirahome.customapplication.datePickerView.DatePickView
         android:id="@+id/date_select_view"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="200dp"
         app:defaultDay="6"
         app:defaultMonth="6"
@@ -159,20 +159,8 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/set_year_btn"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="SET"/>
-
-        <Button
-            android:id="@+id/set_month_btn"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:text="SET"/>
-
-        <Button
-            android:id="@+id/set_day_btn"
-            android:layout_width="50dp"
+            android:id="@+id/set_btn"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="SET"/>
 

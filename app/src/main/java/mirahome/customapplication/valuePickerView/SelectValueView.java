@@ -1,4 +1,4 @@
-package mirahome.customapplication;
+package mirahome.customapplication.valuePickerView;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -19,6 +19,8 @@ import android.widget.OverScroller;
 import com.blankj.ALog;
 
 import java.lang.ref.WeakReference;
+
+import mirahome.customapplication.R;
 
 /**
  * Created by xuxiaowu on 2017/10/30.

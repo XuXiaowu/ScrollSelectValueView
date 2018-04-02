@@ -15,5 +15,9 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="gary">#5071717B</color>
+    <color name="gray3">#64686e</color>
+    <color name="gray5">#101620</color>
+    <color name="gray5_50">#C9101620</color>
+    <color name="green2">#3ac73c</color>
 
 </resources>

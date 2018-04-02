@@ -3,18 +3,13 @@
        android:layout_width="match_parent"
        android:layout_height="match_parent">
 
-    <mirahome.customapplication.YearPickView
-        android:id="@+id/year_pick_view"
+    <mirahome.customapplication.weightPickView.FirstSelectView
+        android:id="@+id/first_pick_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <mirahome.customapplication.MonthPickView
-        android:id="@+id/month_pick_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <mirahome.customapplication.DayPickView
-        android:id="@+id/day_pick_view"
+    <mirahome.customapplication.weightPickView.SecondSelectView
+        android:id="@+id/second_pick_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -22,12 +17,12 @@
         android:id="@+id/top_mask_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/transparent_white_50"/>
+        android:background="@color/gray5_50"/>
 
     <View
         android:id="@+id/bottom_mask_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/transparent_white_50"/>
+        android:background="@color/gray5_50"/>
 
 </merge>

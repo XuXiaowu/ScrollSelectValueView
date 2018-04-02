@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="mirahome.customapplication.HeightActivity">
+
+    <mirahome.customapplication.heightPickerView.HeightPickView
+        android:id="@+id/height_pick_view"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        app:heightPickTextSize="24dp"
+        app:heightPickIsMetricUnit="true"
+        app:heightPickTextColor="@color/colorPrimary"
+        app:heightPickDefaultFirstMetricIndex="70"
+        app:heightPickDefaultFirstInchIndex="3"
+        app:heightPickDefaultSecondIndex="1"
+        app:heightPickDefaultThirdIndex="0"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/first_edit_view"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+
+        <EditText
+            android:id="@+id/second_edit_view"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"/>
+
+        <Switch
+            android:id="@+id/switch_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="is metric"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/set_btn"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="SET"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

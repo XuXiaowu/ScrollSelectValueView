@@ -11,6 +11,7 @@
         <attr name="maxValue" format="integer"/>
     </declare-styleable>
 
+    <!-- DatePickView自定义属性 -->
     <declare-styleable name="DatePickView">
         <attr name="textColor" format="color"/>
         <attr name="textSize" format="dimension"/>
@@ -18,7 +19,29 @@
         <attr name="defaultYear" format="integer"/>
         <attr name="defaultMonth" format="integer"/>
         <attr name="defaultDay" format="integer"/>
+    </declare-styleable>
 
+    <!-- HeightPickView自定义属性 -->
+    <declare-styleable name="HeightPickView">
+        <attr name="heightPickTextColor" format="color"/>
+        <attr name="heightPickTextSize" format="dimension"/>
+        <attr name="heightPickTextMargin" format="dimension"/>
+        <attr name="heightPickIsMetricUnit" format="boolean"/>
+        <attr name="heightPickDefaultFirstMetricIndex" format="integer"/>
+        <attr name="heightPickDefaultFirstInchIndex" format="integer"/>
+        <attr name="heightPickDefaultSecondIndex" format="integer"/>
+        <attr name="heightPickDefaultThirdIndex" format="integer"/>
+    </declare-styleable>
+
+    <!-- WeightPickView自定义属性 -->
+    <declare-styleable name="WeightPickView">
+        <attr name="weightPickTextColor" format="color"/>
+        <attr name="weightPickTextSize" format="dimension"/>
+        <attr name="weightPickTextMargin" format="dimension"/>
+        <attr name="weightPickIsMetricUnit" format="boolean"/>
+        <attr name="weightPickDefaultFirstMetricValue" format="integer"/>
+        <attr name="weightPickDefaultFirstInchValue" format="integer"/>
+        <attr name="weightPickDefaultSecondIndex" format="integer"/>
     </declare-styleable>
 
 </resources>

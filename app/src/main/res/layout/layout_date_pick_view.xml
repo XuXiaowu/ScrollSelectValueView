@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+    <mirahome.customapplication.datePickerView.YearPickView
+        android:id="@+id/year_pick_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <mirahome.customapplication.datePickerView.MonthPickView
+        android:id="@+id/month_pick_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <mirahome.customapplication.datePickerView.DayPickView
+        android:id="@+id/day_pick_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        android:id="@+id/top_mask_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent_white_50"/>
+
+    <View
+        android:id="@+id/bottom_mask_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent_white_50"/>
+
+</merge>

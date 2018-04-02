@@ -1,4 +1,4 @@
-package mirahome.customapplication;
+package mirahome.customapplication.heightPickerView;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -14,22 +14,25 @@ import android.widget.OverScroller;
 
 import com.blankj.ALog;
 
+import mirahome.customapplication.R;
+
 /**
  * Created by xuxiaowu on 2017/11/13.
  */
 
-public class MonthPickView extends View {
+public class SecondSelectView extends View {
 
-    private static final int DEFAULT_HEIGHT = 500;
+    private static final int DEFAULT_HEIGHT = 600;
     private static final int DEFAULT_WIDTH = 300;
-    private static final int MIN_MONTH = 1;
-    private static final int MAX_MONTH = 12;
     private static final int TEXT_SIZE = 60; //字体大小
     private static final int TEXT_MARGIN = 40;
+    private static final int INCH_MIN_VALUE = 0; //公制最小值
+    private static final int INCH_MAX_VALUE = 11; //公制最大值
+
+    private static final String[] INCH_VALUES = new String[]{"00\"", "01\"", "02\"", "03\"", "04\"", "05\"", "06\"", "07\"", "08\"", "09\"", "10\"", "11\""}; //英制数据
 
     private float mStartY = 0;//按下时y值
 
-    private int mSelectMonth; //选中的月份
     private int mMoveY;
     private int mHeight;
     private int mWidth;
@@ -38,9 +41,8 @@ public class MonthPickView extends View {
     private int mLastY;
     private int mItemHeight; //item高度
     private int mTextHeight; //文字的高度
-    private int mTextSize;
-    private int mTextColor;
     private int mTextMargin;
+    private int mSelectIndex;
 
     private boolean mAutoSmoothScrollable;
 
@@ -49,37 +51,31 @@ public class MonthPickView extends View {
     private EdgeEffect mTopEdgeEffect;
     private EdgeEffect mBottomEdgeEffect;
     private OverScroller mScroller;
-    private MonthSelectListener mMonthSelectListener;
+    private ValueSelectListener mValueSelectListener;
 
-    public MonthPickView(Context context) {
+    public SecondSelectView(Context context) {
         this(context, null);
     }
 
-    public MonthPickView(Context context, @Nullable AttributeSet attrs) {
+    public SecondSelectView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MonthPickView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public SecondSelectView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setBackgroundResource(R.color.white);
-
         init();
-        resetScrollPosition();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//        mWidth = MeasureSpec.getSize(widthMeasureSpec);
-//        mHeight = MeasureSpec.getSize(heightMeasureSpec);
-//        mFlingMinY = -mWidth / 2;
         setMeasuredDimension(mWidth, mHeight);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        drawMonthText(canvas);
+        drawValueText(canvas);
         drawEdgeEffect(canvas);
     }
 
@@ -151,10 +147,10 @@ public class MonthPickView extends View {
             }
 
         } else {
-            int month = valueI + MIN_MONTH;
-            if (month != mSelectMonth && mMonthSelectListener != null && mAutoSmoothScrollable) {
-                mSelectMonth = month;
-                mMonthSelectListener.onMonthSelectedListener(mSelectMonth);
+            int index = valueI;
+            if (index != mSelectIndex && mValueSelectListener != null && mAutoSmoothScrollable) {
+                mSelectIndex = index;
+                mValueSelectListener.onSecondValueSelectedListener(INCH_VALUES[mSelectIndex]);
             }
 
             if (mAutoSmoothScrollable) {
@@ -167,6 +163,7 @@ public class MonthPickView extends View {
     private void init() {
         mWidth = DEFAULT_WIDTH;
         mHeight = DEFAULT_HEIGHT;
+        mTextMargin = TEXT_MARGIN;
 
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextSize(TEXT_SIZE);
@@ -175,19 +172,16 @@ public class MonthPickView extends View {
         mScroller = new OverScroller(getContext());
 
         Rect rect = new Rect();
-        String text = String.valueOf(MIN_MONTH);
+        String text = String.valueOf(INCH_VALUES[mSelectIndex]);
         mTextPaint.getTextBounds(text, 0, text.length(), rect);
         mTextHeight = rect.height();
-        mItemHeight = TEXT_MARGIN + mTextHeight + TEXT_MARGIN;
+        mItemHeight = mTextMargin * 2 + mTextHeight;
 
         mFlingMinY = -mHeight / 2;
-        mFlingMaxY = MAX_MONTH * mItemHeight - mHeight / 2 - mItemHeight;
+        mFlingMaxY = INCH_VALUES.length * mItemHeight - mHeight / 2 - mItemHeight;
 
         mTopEdgeEffect = new EdgeEffect(getContext());
         mBottomEdgeEffect = new EdgeEffect(getContext());
-
-//        scrollTo(0, mFlingMinY);
-//        mScroller.startScroll(0, mFlingMinY, 0, 0, 0);
     }
 
     //缓慢滚动到指定位置
@@ -207,20 +201,15 @@ public class MonthPickView extends View {
     }
 
     /**
-     * 绘制月份文字
+     * 绘制文字
      */
-    private void drawMonthText(Canvas canvas) {
-        for (int i = MIN_MONTH; i < MAX_MONTH + 1; i++) {
-            String year;
-            if (i < 10) {
-                year = "0" + String.valueOf(i);
-            } else {
-                year = String.valueOf(i);
-            }
-            float textLength = mTextPaint.measureText(year);
+    private void drawValueText(Canvas canvas) {
+        for (int i = 0; i < INCH_VALUES.length; i++) {
+            String value = INCH_VALUES[i];
+            float textLength = mTextPaint.measureText(value);
             float x = (mWidth - textLength) / 2;
-            float y = mItemHeight * (i - 1) + mTextHeight / 2;
-            canvas.drawText(year, x, y, mTextPaint);
+            float y = mItemHeight * i + mTextHeight / 2;
+            canvas.drawText(value, x, y, mTextPaint);
         }
     }
 
@@ -255,51 +244,79 @@ public class MonthPickView extends View {
         mHeight = height;
 
         Rect rect = new Rect();
-        String text = String.valueOf(MIN_MONTH);
+        String text = INCH_VALUES[mSelectIndex];
         mTextPaint.getTextBounds(text, 0, text.length(), rect);
         mTextHeight = rect.height();
 
         mItemHeight = mTextMargin * 2 + mTextHeight;
         mFlingMinY = -mHeight / 2;
-        mFlingMaxY = MAX_MONTH * mItemHeight - mHeight / 2 - mItemHeight;
+        mFlingMaxY = INCH_VALUES.length * mItemHeight - mHeight / 2 - mItemHeight;
+        resetScrollPosition();
+    }
+
+    public int getItemHeight() {
+        return mItemHeight;
     }
 
     /**
      * 重置View到初始位置
      */
     public void resetScrollPosition() {
-        scrollTo(0, mFlingMinY);
-        mScroller.startScroll(0, mFlingMinY, 0, 0, 0);
-    }
-
-    public void setAttribute(int textSize, int textColor, int textMargin) {
-        mTextSize = textSize;
-        mTextColor = textColor;
-        mTextMargin = textMargin;
-        mTextPaint.setTextSize(mTextSize);
-        mTextPaint.setColor(mTextColor);
-    }
-
-    public void setMonth(int month) {
-        if (month < MIN_MONTH || month > MAX_MONTH) {
-            throw new RuntimeException("month overrun");
-        }
-        mSelectMonth = month;
-        int moveY = (month - 1) * mItemHeight + mFlingMinY;
+        int moveY = mFlingMinY + mSelectIndex * mItemHeight;
         scrollTo(0, moveY);
         mScroller.startScroll(0, moveY, 0, 0, 0);
     }
 
-    public void setMonthSelectListener(MonthSelectListener monthSelectListener) {
-        mMonthSelectListener = monthSelectListener;
+    public void setAttribute(int textSize, int textColor, int textMargin) {
+        mTextMargin = textMargin;
+        mTextPaint.setTextSize(textSize);
+        mTextPaint.setColor(textColor);
     }
 
-    public interface MonthSelectListener {
+    public void setDefaultValueForIndex(int index) {
+        mSelectIndex = index;
+        resetScrollPosition();
+    }
+
+    public String getValueForIndex(int index) {
+        return INCH_VALUES[index];
+    }
+
+    public void setValueSelectListener(ValueSelectListener valueSelectListener) {
+        mValueSelectListener = valueSelectListener;
+    }
+
+    /**
+     * 选中指定值
+     *
+     * @param value 值
+     */
+    public void setSelectValue(int value) {
+        if (!(value >= INCH_MIN_VALUE && value <= INCH_MAX_VALUE))
+            throw new RuntimeException("value overrun");
+
+        String inchValue;
+        if (value < 10) {
+            inchValue = "0" + value + "\"";
+        } else {
+            inchValue = value + "\"";
+        }
+        for (int i = 0; i < INCH_VALUES.length; i++) {
+            if (inchValue.equals(INCH_VALUES[i])) {
+                mSelectIndex = i;
+                break;
+            }
+        }
+        resetScrollPosition();
+    }
+
+
+    public interface ValueSelectListener {
 
         /**
          * 值选中时的回调
          */
-        void onMonthSelectedListener(int month);
+        void onSecondValueSelectedListener(String value);
     }
 
 }

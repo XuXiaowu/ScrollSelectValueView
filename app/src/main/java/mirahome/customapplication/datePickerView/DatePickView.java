@@ -1,4 +1,4 @@
-package mirahome.customapplication;
+package mirahome.customapplication.datePickerView;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -7,14 +7,16 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import mirahome.customapplication.R;
+import mirahome.customapplication.base.AbsViewGroup;
+
 /**
  * Created by xuxiaowu on 2017/11/14.
+ * <p>
+ * 日期选择器
  */
-
 public class DatePickView extends AbsViewGroup implements MonthPickView.MonthSelectListener, YearPickView.YearSelectListener, DayPickView.DaySelectListener {
 
-    private static final int DEFAULT_HEIGHT = 500;
-    private static final int DEFAULT_ITEM_WIDTH = 300;
     private static final int DEFAULT_YEAR = 1900;
     private static final int DEFAULT_MONTH = 1;
     private static final int DEFAULT_DAY = 1;
@@ -67,7 +69,7 @@ public class DatePickView extends AbsViewGroup implements MonthPickView.MonthSel
 
     @Override
     public void initView(Context context) {
-        LayoutInflater.from(context).inflate(R.layout.date_pick_view, this);
+        LayoutInflater.from(context).inflate(R.layout.layout_date_pick_view, this);
         mYearPickView = findViewById(R.id.year_pick_view);
         mMonthPickView = findViewById(R.id.month_pick_view);
         mDayPickView = findViewById(R.id.day_pick_view);
@@ -81,9 +83,7 @@ public class DatePickView extends AbsViewGroup implements MonthPickView.MonthSel
 
     @Override
     public void initSize(Context context) {
-//        mViewWidth = DEFAULT_ITEM_WIDTH * 3;
-//        mViewHeight = DEFAULT_HEIGHT;
-//        mItemWidth = DEFAULT_ITEM_WIDTH;
+
     }
 
     @Override
@@ -104,7 +104,7 @@ public class DatePickView extends AbsViewGroup implements MonthPickView.MonthSel
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        if (mViewHeight == 0 || mViewHeight == 0) {
+        if (mViewHeight == 0 || mViewWidth == 0) {
             mViewWidth = MeasureSpec.getSize(widthMeasureSpec);
             mViewHeight = MeasureSpec.getSize(heightMeasureSpec);
             mItemWidth = mViewWidth / 3;
@@ -113,9 +113,9 @@ public class DatePickView extends AbsViewGroup implements MonthPickView.MonthSel
             mDayPickView.setSize(mItemWidth, mViewHeight);
             mItemHeight = mDayPickView.getItemHeight();
 
-            mYearPickView.setYear(mDefaultYear);
-            mMonthPickView.setMonth(mDefaultMonth);
-            mDayPickView.setDay(mDefaultDay);
+            mYearPickView.setSelectYear(mDefaultYear);
+            mMonthPickView.setSelectMonth(mDefaultMonth);
+            mDayPickView.setSelectDay(mDefaultDay);
 
             computeYearRect();
             computeMonthRect();
@@ -165,6 +165,10 @@ public class DatePickView extends AbsViewGroup implements MonthPickView.MonthSel
         mDefaultMonth = typedArray.getInt(R.styleable.DatePickView_defaultMonth, DEFAULT_MONTH);
         mDefaultDay = typedArray.getInt(R.styleable.DatePickView_defaultDay, DEFAULT_DAY);
         typedArray.recycle();
+
+        mSelectYear = mDefaultYear;
+        mSelectMonth = mDefaultMonth;
+        mSelectDay = mDefaultDay;
     }
 
     private void setChildViewAttribute() {
@@ -231,6 +235,23 @@ public class DatePickView extends AbsViewGroup implements MonthPickView.MonthSel
 
     public void setDateSelectListener(DateSelectListener dateSelectListener) {
         mDateSelectListener = dateSelectListener;
+    }
+
+    /**
+     * 设置选中的日期
+     *
+     * @param year  年
+     * @param month 月
+     * @param day   日
+     */
+    public void setSelectDate(int year, int month, int day) {
+        mYearPickView.setSelectYear(year);
+        mMonthPickView.setSelectMonth(month);
+        mDayPickView.setSelectDay(day);
+
+        mSelectYear = year;
+        mSelectMonth = month;
+        mSelectDay = day;
     }
 
     public interface DateSelectListener {
